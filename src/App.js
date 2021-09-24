@@ -42,11 +42,12 @@ const AddWord = ({ addWord }) => {
   );
 };
 
+const DeleteButton = ({id, deleteWord}) => (
+  <Button variant="danger" onClick={() => deleteWord(id)}>Delete</Button>
+)
+
 function App() {
-  const [words, setWords] = useState([
-    { enInfinitive: "to walk", esInfinitive: "caminar" },
-    { enInfinitive: "to fly", esInfinitive: "volar" },
-  ]);
+  const [words, setWords] = useState([]);
 
   useEffect( () =>
     axios.get("/api/words").then((response) => {
@@ -56,9 +57,15 @@ function App() {
   );
 
   const addWord = (word) => {
-    // setWords(words.concat(word));
     axios.post("/api/words",word).then((response) => {
       setWords(words.concat(word))
+    }
+    )
+  };
+
+  const deleteWord = (id) => {
+    axios.delete(`/api/words/${id}`).then((response) => {
+      setWords(words.filter(w => w.id !== id))
     }
     )
   };
@@ -79,7 +86,7 @@ function App() {
             <tr key={i}>
               <td>{w.enInfinitive}</td>
               <td>{w.esInfinitive}</td>
-              <td></td>
+              <td><DeleteButton id={w.id} deleteWord={deleteWord}/></td>
             </tr>
           ))}
           <AddWord addWord={addWord} />
