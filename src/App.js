@@ -1,9 +1,10 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 import Button from "react-bootstrap/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const AddWord = ({addWord}) => {
+const AddWord = ({ addWord }) => {
   const [englishWord, setEnglishWord] = useState("");
   const [spanishWord, setSpanishWord] = useState("");
 
@@ -33,7 +34,9 @@ const AddWord = ({addWord}) => {
         ></input>
       </td>
       <td>
-        <Button variant="primary" onClick={addClickHandler}>Add Word</Button>
+        <Button variant="primary" onClick={addClickHandler}>
+          Add Word
+        </Button>
       </td>
     </tr>
   );
@@ -45,9 +48,20 @@ function App() {
     { enInfinitive: "to fly", esInfinitive: "volar" },
   ]);
 
+  useEffect( () =>
+    axios.get("/api/words").then((response) => {
+      setWords(response.data);
+    }),
+    []
+  );
+
   const addWord = (word) => {
-    setWords(words.concat(word))
-  } 
+    // setWords(words.concat(word));
+    axios.post("/api/words",word).then((response) => {
+      setWords(words.concat(word))
+    }
+    )
+  };
 
   return (
     <div className="text-center">
@@ -68,7 +82,7 @@ function App() {
               <td></td>
             </tr>
           ))}
-          <AddWord addWord={addWord}/>
+          <AddWord addWord={addWord} />
         </tbody>
       </table>
     </div>
